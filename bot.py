@@ -75,7 +75,9 @@ def user_not_allowed(message):
 
 # USER STEP
 def get_user_step(uid):
-    if (uid in authorizedUsers) & (uid in userStep):
+    if (uid in authorizedUsers):
+        if (uid not in userStep):
+            userStep[uid] = 0
         return userStep[uid]
     else:
         userStep[uid] = 0
@@ -313,6 +315,7 @@ def main_menu(message):
                 bot.send_message(
                     chat_id, "I can't understand that command, sorry :'(")
                 print(e)
+                back2_main_menu(chat_id)
         else:
             shell_exec(message)
     else:
@@ -415,7 +418,7 @@ def info_opt(message):
     except Exception as e:
         bot.send_message(chat_id, "I can't understand that command, sorry :'(")
         print(e)
-
+        back2_main_menu(chat_id)
 
 print('Running...')
 bot.polling(none_stop=True)

@@ -1,5 +1,6 @@
 # config file, to develop or make changes
 config.py
+logFileBot.txt
 # some files automatic created
 .idea/
 __pycache__/
