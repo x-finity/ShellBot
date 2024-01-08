@@ -3,21 +3,29 @@
 
 import os
 import time
+#import telepot
 
 import telebot
 from telebot import types
 from telebot import util
 
+from subprocess import Popen, PIPE, STDOUT
+
+
 from config import TOKEN
 from config import authorizedUsers
 
 userStep = {}
+shellexecution = []
+stopmarkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+stopmarkup.add('stop shell')
 
-menu = types.ReplyKeyboardMarkup()
+menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+#menu = types.InlineKeyboardMarkup()
 menu.add('info serv', 'ip route', 'public ip')
-menu.add('active processes', 'netstat', 'who')
+menu.add('active processes', 'netstat', 'shell')
 
-info_menu = types.ReplyKeyboardMarkup()
+info_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
 info_menu.add('Temp', 'Hard Disk Space')
 info_menu.add('RAM', 'CPU')
 info_menu.add('Back')
@@ -78,26 +86,57 @@ def get_user_step(uid):
     if uid in userStep:
         return userStep[uid]
 
+def shell_exec(message):
+    chat_id = message.chat.id
+    if message.text == 'stop shell':
+        shell_stop(chat_id)
+    else:
+        if chat_id in authorizedUsers:
+            if chat_id in shellexecution:
+                bot.send_message(chat_id, 'Running: `$' +
+                                 message.text + '`', parse_mode='Markdown')
+                command = os.popen(message.text)
+                result = command.read()
+                splitted_text = util.split_string(result, 3000)
+#                bot.send_message(
+#                    chat_id, '`$' + message.text + '`\n', parse_mode='Markdown')
+                for text in splitted_text:
+                    bot.send_message(chat_id, text)
+                bot.send_message(
+                    chat_id, '-`$' + message.text + '`- FINISHED ', parse_mode='Markdown')
+
 
 # EXEC COMMAND
 @bot.message_handler(commands=['exec'])
 def command_exec(message):
     chat_id = message.chat.id
     if chat_id in authorizedUsers:
-        bot.send_message(chat_id, 'Running: `$' +
-                         message.text[len('/exec'):] + '`', parse_mode='Markdown')
-        command = os.popen(message.text[len('/exec'):])
-        result = command.read()
-        splitted_text = util.split_string(result, 3000)
-        bot.send_message(
-            chat_id, '`$' + message.text[len('/exec'):] + '`\n', parse_mode='Markdown')
-        for text in splitted_text:
-            bot.send_message(chat_id, text)
-        bot.send_message(
-            chat_id, '-`$' + message.text[len('/exec'):] + '`- FINISHED ', parse_mode='Markdown')
+        if chat_id not in shellexecution:
+            bot.send_message(chat_id, 'Running: `$' +
+                             message.text[len('/exec'):] + '`', parse_mode='Markdown')
+            command = os.popen(message.text[len('/exec'):])
+            result = command.read()
+            splitted_text = util.split_string(result, 3000)
+            bot.send_message(
+                chat_id, '`$' + message.text[len('/exec'):] + '`\n', parse_mode='Markdown')
+            for text in splitted_text:
+                bot.send_message(chat_id, text)
+            bot.send_message(
+                chat_id, '-`$' + message.text[len('/exec'):] + '`- FINISHED ', parse_mode='Markdown')
     else:
         user_not_allowed(message)
 
+#    if chat_id in shellexecution:
+#        bot.send_message(chat_id, 'typing')
+
+
+'''        p = Popen(msg['text'], shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        output = p.stdout.read()
+        if output != b'':
+            bot.send_message(chat_id, output, disable_web_page_preview=True)
+        else:
+            bot.send_message(chat_id, "Упс.", disable_web_page_preview=True)
+'''
 
 # AMASSENUM COMMAND
 @bot.message_handler(commands=['amassenum'])
@@ -169,7 +208,7 @@ def command_start(message):
         bot.send_message(chat_id, 'Welcome back ' + str(message.chat.first_name) + '...')
         bot.send_message(chat_id, "I'm ready to receive your orders...")
         time.sleep(1)
-        bot.send_message(chat_id, 'Hack the planet!', reply_markup=menu)
+#        bot.send_message(chat_id, 'Hack the planet!', reply_markup=menu)
     else:
         log_activity = (time.strftime('%d/%m/%y-%H:%M:%S') + Color.GREEN +
                         ' [' + str(message.chat.id) + '] ' + str(
@@ -220,6 +259,34 @@ def netstat(chat_id):
     for text in splitted_text:
         bot.send_message(chat_id, text)
 
+def exec_shell(chat_id):
+    bot.send_message(chat_id, 'Your chat_id:' + str(chat_id))
+    if chat_id in authorizedUsers:
+        if chat_id not in shellexecution:
+            bot.send_message(chat_id, "Отправьте мне Shell-комманду", reply_markup=stopmarkup)
+            shellexecution.append(chat_id)
+#        elif chat_id in shellexecution:
+#            try:
+#                bot.send_message(chat_id, 'Running: `$' + chat_id)
+#            except Exception:
+#                print(traceback.format_exc())
+#            bot.sendChatAction(chat_id, 'typing')
+#            command = os.popen(str(message.text))
+#            output = command.read()
+#            p = Popen(message['text'], shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+ #           output = p.stdout.read()
+#            if output != b'':
+#                bot.send_message(chat_id, output)
+#            else:
+#                bot.send_message(chat_id, "Возникла внутренняя ошибка.. НО(!!!), возможно команда выполнена. Проверьте!", disable_web_page_preview=True) 
+
+
+#    bot.send_message(chat_id, 'test')
+#    shell = os.popen('echo "ebaniy v rot5"').read()
+#    bot.send_message(chat_id, shell)
+def shell_stop(chat_id):
+    bot.send_message(chat_id, 'Main menu:', reply_markup=menu)
+    shellexecution.remove(chat_id)
 
 optionsMainMenu = {
     'info serv': inf_serv,
@@ -227,7 +294,8 @@ optionsMainMenu = {
     'public ip': ip_public,
     'active processes': active_processes,
     'netstat': netstat,
-    'who': who_is_logged
+    'shell': exec_shell,
+    'stop shell': shell_stop
 }
 
 
@@ -237,16 +305,18 @@ def main_menu(message):
     chat_id = message.chat.id
     text = message.text
     if chat_id in authorizedUsers:
-        func = (optionsMainMenu.get(text))
-        try:
-            func(chat_id)
-        except Exception as e:
-            bot.send_message(
-                chat_id, "I can't understand that command, sorry :'(")
-            print(e)
+        if chat_id not in shellexecution:
+            func = (optionsMainMenu.get(text))
+            try:
+                func(chat_id)
+            except Exception as e:
+                bot.send_message(
+                    chat_id, "I can't understand that command, sorry :'(")
+                print(e)
+        else:
+            shell_exec(message)
     else:
         user_not_allowed(message)
-
 
 # INFO RAM
 def get_ram_info():

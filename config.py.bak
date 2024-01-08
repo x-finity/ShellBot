@@ -1,4 +1,4 @@
 # Change to your bot token of @BotFather
-TOKEN = '<ENTER YOUR TOKEN>'
+TOKEN = 'XXXXXXXXX:XXXXXXXXXXXXX-XXXXXXXXXXXXXX'
 # Change to the id number(s) of the user(s) who is/are authorized to use the bot (@userinfobot)
-authorizedUsers = [<ENTER USER TGID>]
+authorizedUsers = [12345678, 987654321]
