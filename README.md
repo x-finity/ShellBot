@@ -9,9 +9,10 @@ You will be notified when your task(command line) is finished with results. This
 
 ## Preview 👀
 
-|![/start command](./previews/start.jpg)|![/help command](./previews/help.jpg)|
-|![/nmapadv command](./previews/customNmap.jpg)|![/amassenum command](./previews/amassEnum.jpg)|
-|![/shell command](./previews/shell.jpg)|
+|:![/start command](./previews/start.jpg):|:![/help command](./previews/help.jpg):|
+|:---------------------------------------:|:---------------------------------------:|
+|:![/nmapadv command](./previews/customNmap.jpg):|:![/amassenum command](./previews/amassEnum.jpg):|
+|:![/shell command](./previews/shell.jpg):|:	:|
 
 ## Getting Started
 
