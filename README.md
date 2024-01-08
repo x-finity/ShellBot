@@ -13,7 +13,7 @@ You will be notified when your task(command line) is finished with results. This
 |---------------------------------------|---------------------------------------|
 |![/nmapadv command](./previews/customNmap.jpg)|![/amassenum command](./previews/amassEnum.jpg)|
 |---------------------------------------|---------------------------------------|
-|![/shell command](./previews/shell.jpg|)
+|![/shell command](./previews/shell.jpg)|
 
 ## Getting Started
 
