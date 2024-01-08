@@ -72,7 +72,7 @@ E.g.:
 │       ├── public ip
 │       ├── active processes
 │       ├── netstat    # by services
-│       └── who        # who is logged on your device
+│       └── shell        # enter shell mode
 ├── /exec   # execute a command line that you give E.g.:
 │           # /exec echo 'awesome bot!')
 ├── /amassenum  # /amassenum example.com -> $ amass enum -d example.com
